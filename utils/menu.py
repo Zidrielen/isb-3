@@ -24,8 +24,8 @@ def console_menu():
         if args.generation:
             sym = symmetric()
             asym = asymmetric()
-            asym.save_asymmetric_keys(settings["private_key"], settings["public_key"])
             sym.sym_key = asym.asymmetric_encrypt(sym.sym_key)
+            asym.save_asymmetric_keys(settings["private_key"], settings["public_key"])
             sym.save_symmetric_key(settings["symmetric_key"], settings["extra_parameter"])
 
 

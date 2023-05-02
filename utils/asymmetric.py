@@ -48,7 +48,7 @@ class asymmetric:
         :param sym_key - symmetrical key for encryption
         :return - encrypted symmetrical key
         '''
-
+        
         cipher_key = self.__public_key.encrypt(sym_key,
                                                padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()),
                                                             algorithm=hashes.SHA256(), label=None))

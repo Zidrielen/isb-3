@@ -10,8 +10,8 @@ logging.getLogger().setLevel(logging.INFO)
 class symmetric:
     def __init__(self) -> None:
         '''Class for working with symmetric encryption algorithm'''
-        self.__symmetric_key = os.urandom(256)
-        self.__extra_parameter = int(uuid.uuid4())
+        self.__symmetric_key = os.urandom(32)
+        self.__extra_parameter = os.urandom(16)
         logging.info("Summetric key and additional parameter of ChaCha20 algorithm successfully generated")
 
     def get_key(self) -> bytes:
@@ -43,7 +43,7 @@ class symmetric:
         
         try:
             with open(extra_pam_txt, "wb") as extra_file:
-                key_file.write(self.__extra_parameter)
+                extra_file.write(self.__extra_parameter)
             logging.info(f"Extra parameter successfully saved to {extra_pam_txt}")
 
         except OSError as err:

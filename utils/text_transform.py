@@ -1,4 +1,5 @@
 import logging
+import sys
 
 
 class Text_transform:
@@ -20,15 +21,15 @@ class Text_transform:
         """
         The function reads text in byte form from .txt file
 
-        :param file_name - name of .txt file.
+        :param initial_txt - name of .txt file.
         """
         try:
             with open(initial_txt, "rb") as text_file:
                 self.text = text_file.read()
             logging.info(f"Text was successfully read from file {initial_txt}")
         except OSError as err:
-            logging.warning(
-                f"Text was not read from file {initial_txt}\n{err}")
+            logging.warning(f"Text wasn't read from file {initial_txt}")
+            sys.exit(err)
 
     def byte_write_text(self, encryption_txt: str) -> None:
         """
@@ -42,7 +43,7 @@ class Text_transform:
             logging.info(
                 f"Text was successfully written to file {encryption_txt}")
         except OSError as err:
-            logging.warning(
-                f"Text was not written to file {encryption_txt}\n{err}")
-            
+            logging.warning(f"Text wasn't written to file {encryption_txt}")
+            sys.exit(err)
+
     txt = property(get, set)

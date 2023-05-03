@@ -1,4 +1,5 @@
 import logging
+import sys
 
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
@@ -36,7 +37,8 @@ class Asymmetric:
             logging.info(f"Private key successfully loaded from {private_pem}")
         except OSError as err:
             logging.warning(
-                f"Private key was not loaded from file {private_pem}\n{err}")
+                f"Private key was not loaded from file {private_pem}")
+            sys.exit(err)
 
     def save_asymmetric_keys(self, private_pem: str, public_pem: str) -> None:
         """
@@ -55,8 +57,8 @@ class Asymmetric:
                 logging.info(
                     f"Private key successfully saved to {private_pem}")
         except OSError as err:
-            logging.warning(
-                f"Private key wasn't saved to {private_pem}\n{err}")
+            logging.warning(f"Private key wasn't saved to {private_pem}")
+            sys.exit(err)
         try:
             with open(public_pem, "wb") as public_out:
                 public_out.write(
@@ -65,7 +67,8 @@ class Asymmetric:
                         format=serialization.PublicFormat.SubjectPublicKeyInfo))
                 logging.info(f"Public key successfully saved to {public_pem}")
         except OSError as err:
-            logging.warning(f"Public key wasn't saved to {public_pem}\n{err}")
+            logging.warning(f"Public key wasn't saved to {public_pem}")
+            sys.exit(err)
 
     def asymmetric_encrypt(self, sym_key: bytes) -> bytes:
         """

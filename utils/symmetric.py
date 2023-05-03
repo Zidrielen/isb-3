@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms
 
@@ -29,14 +30,12 @@ class Symmetric:
         """Setter for symmetric key"""
         self.__key = new_key
 
-    sym_key = property(get_key, set_key)
-
     def load_symmetric_key(self, key_txt: str, nonce_txt: str) -> None:
         """
         The function loads a symmetric key and extra parameter from .txt file
 
-        :param symmetric_txt - name of .txt file
-        :param extra_pam_txt - name of .txt file for extra parameter
+        :param key_txt - name of .txt file for symmetric key
+        :param nonce_txt - name of .txt file for extra parameter
         """
         try:
             with open(key_txt, "rb") as key_file:
@@ -44,7 +43,8 @@ class Symmetric:
             logging.info(f"Symmetric key successfully loaded from {key_txt}")
         except OSError as err:
             logging.warning(
-                f"Symmetric key was not loaded from file {key_txt}\n{err}")
+                f"Symmetric key was not loaded from file {key_txt}")
+            sys.exit(err)
         try:
             with open(nonce_txt, "rb") as nonce_file:
                 self.__nonce = nonce_file.read()
@@ -52,28 +52,30 @@ class Symmetric:
                 f"Extra parameter successfully loaded from {nonce_txt}")
         except OSError as err:
             logging.warning(
-                f"Symmetric key was not loaded from file {nonce_txt}\n{err}")
+                f"Symmetric key was not loaded from file {nonce_txt}")
+            sys.exit(err)
 
     def save_symmetric_key(self, key_txt: str, nonce_txt: str) -> None:
         """
         The functiion saves a symmetric key and extra parameter to .txt
 
-        :param symmetric_txt - name of .txt file for symmetric key
-        :param extra_pam_txt - name of .txt file for extra parameter
+        :param key_txt - name of .txt file for symmetric key
+        :param nonce_txt - name of .txt file for extra parameter
         """
         try:
             with open(key_txt, "wb") as key_file:
                 key_file.write(self.__key)
             logging.info(f"Symmetric key successfully saved to {key_txt}")
         except OSError as err:
-            logging.warning(f"Symmetric key wasn't saved to {key_txt}\n{err}")
+            logging.warning(f"Symmetric key wasn't saved to {key_txt}")
+            sys.exit(err)
         try:
             with open(nonce_txt, "wb") as nonce_file:
                 nonce_file.write(self.__nonce)
             logging.info(f"Extra parameter successfully saved to {nonce_txt}")
         except OSError as err:
-            logging.warning(
-                f"Extra parameter wasn't saved to {nonce_txt}\n{err}")
+            logging.warning(f"Extra parameter wasn't saved to {nonce_txt}")
+            sys.exit(err)
 
     def symmetric_encrypt(self, txt: bytes) -> bytes:
         """
@@ -88,3 +90,19 @@ class Symmetric:
         cipher_text = encryptor.update(txt)
         logging.info("Text was successfully encrypted")
         return cipher_text
+
+    def symmetric_decrypt(self, txt: bytes) -> bytes:
+        """
+        The function decrypts an input text using symmetric key
+
+        :param txt - text for decryption
+        :return - decrypted text
+        """
+        algorithm = algorithms.ChaCha20(self.__key, self.__nonce)
+        cipher = Cipher(algorithm, mode=None)
+        decryptor = cipher.decryptor()
+        decipher_text = decryptor.update(txt)
+        logging.info("Text was successfully decrypted")
+        return decipher_text
+
+    sym_key = property(get_key, set_key)

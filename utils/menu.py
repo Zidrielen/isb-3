@@ -1,16 +1,31 @@
 import argparse
+import json
+import logging
 
 from utils.asymmetric import Asymmetric
 from utils.symmetric import Symmetric
-from utils.system_functions import load_settings
 from utils.text_transform import Text_transform
 
 SETTING_FILE = "files/settings.json"
 
 
+def load_settings(settings_file: str) -> dict:
+    """Loads a configuration file into the program"""
+    settings = None
+    try:
+        with open(settings_file) as json_file:
+            settings = json.load(json_file)
+        logging.info(
+            f"Settings file successfully loaded from {settings_file}")
+    except OSError as err:
+        logging.warning(
+            f"Settings file wasn't loaded from {settings_file}\n{err}")
+    return settings
+
+
 def console_menu():
     """
-    A function with which you can generate 
+    The function with which you can generate
     keys, encrypt and decrypt messages
     """
     parser = argparse.ArgumentParser()
@@ -23,17 +38,17 @@ def console_menu():
     group.add_argument(
         "-gen",
         "--generation",
-        action="store_false",
+        action="store_true",
         help="Запускает режим генерации ключей")
     group.add_argument(
         "-enc",
         "--encryption",
-        action="store_false",
+        action="store_true",
         help="Запускает режим шифрования")
     group.add_argument(
         "-dec",
         "--decryption",
-        action="store_false",
+        action="store_true",
         help="Запускает режим дешифрования")
     args = parser.parse_args()
     settings = load_settings(args.settings) if args.settings else load_settings(SETTING_FILE)
@@ -50,6 +65,7 @@ def console_menu():
             sym.save_symmetric_key(
                 settings["symmetric_key"],
                 settings["extra_parameter"])
+            logging.info("Keys generation completed")
         elif args.encryption:
             sym = Symmetric()
             asym = Asymmetric()
@@ -61,4 +77,18 @@ def console_menu():
             sym.sym_key = asym.asymmetric_decrypt(sym.sym_key)
             text.byte_read_text(settings["initial_file"])
             text.txt = sym.symmetric_encrypt(text.txt)
-            text.byte_write_text(settings["encrypted_file"])
+            text.byte_write_text(settings["encryption_file"])
+            logging.info("Encryption completed")
+        elif args.decryption:
+            sym = Symmetric()
+            asym = Asymmetric()
+            text = Text_transform()
+            asym.load_private_key(settings["private_key"])
+            sym.load_symmetric_key(
+                settings["symmetric_key"],
+                settings["extra_parameter"])
+            sym.sym_key = asym.asymmetric_decrypt(sym.sym_key)
+            text.byte_read_text(settings["encryption_file"])
+            text.txt = sym.symmetric_decrypt(text.txt)
+            text.byte_write_text(settings["decryption_file"])
+            logging.info("Decryption completed")

@@ -23,7 +23,7 @@ def load_settings(settings_file: str) -> dict:
     return settings
 
 
-def console_menu():
+def console_menu() -> None:
     """
     The function with which you can generate
     keys, encrypt and decrypt messages

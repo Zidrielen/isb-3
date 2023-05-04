@@ -4,7 +4,7 @@ import logging
 
 from utils.asymmetric import Asymmetric
 from utils.symmetric import Symmetric
-from utils.text_transform import Text_transform
+from utils.text_transform import TextTransform
 
 SETTING_FILE = "files/settings.json"
 
@@ -69,7 +69,7 @@ def console_menu() -> None:
         elif args.encryption:
             sym = Symmetric()
             asym = Asymmetric()
-            text = Text_transform()
+            text = TextTransform()
             asym.load_private_key(settings["private_key"])
             sym.load_symmetric_key(
                 settings["symmetric_key"],
@@ -82,7 +82,7 @@ def console_menu() -> None:
         elif args.decryption:
             sym = Symmetric()
             asym = Asymmetric()
-            text = Text_transform()
+            text = TextTransform()
             asym.load_private_key(settings["private_key"])
             sym.load_symmetric_key(
                 settings["symmetric_key"],

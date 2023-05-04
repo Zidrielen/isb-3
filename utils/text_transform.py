@@ -2,20 +2,20 @@ import logging
 import sys
 
 
-class Text_transform:
+class TextTransform:
     """Class for working with encrypted and decrypted text"""
 
     def __init__(self) -> None:
         """Conctructor"""
-        self.text = None
+        self.__text = None
 
     def get(self) -> bytes:
         """Getter"""
-        return self.text
+        return self.__text
 
     def set(self, new_text: bytes) -> None:
         """Setter"""
-        self.text = new_text
+        self.__text = new_text
 
     def byte_read_text(self, initial_txt: str) -> None:
         """
@@ -25,7 +25,7 @@ class Text_transform:
         """
         try:
             with open(initial_txt, "rb") as text_file:
-                self.text = text_file.read()
+                self.__text = text_file.read()
             logging.info(f"Text was successfully read from file {initial_txt}")
         except OSError as err:
             logging.warning(f"Text wasn't read from file {initial_txt}")
@@ -39,7 +39,7 @@ class Text_transform:
         """
         try:
             with open(encryption_txt, "wb") as text_file:
-                text_file.write(self.text)
+                text_file.write(self.__text)
             logging.info(
                 f"Text was successfully written to file {encryption_txt}")
         except OSError as err:
